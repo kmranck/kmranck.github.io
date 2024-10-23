@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			th {
+				padding: 10px;
+			}
+		</style>
+		<title>Loan Amortization Calculator</title>
+	</head>
+	<body>
+		<h2>Loan and Amortization Calculator</h2>
+		<table border="1">
+			<tr>
+				<th>Borrowing Year</th>
+				<th>Loan Amount</th>
+			</tr>
+			<tr>
+				<td><input type="number" id="borrowingYear1" onBlur="updateInputTable()" required></td>
+				<td><input type="number" id="loanAmt1" step="0.01" required></td>
+			</tr>
+			<tr>
+				<td><input type="number" id="borrowingYear2" disabled></td>
+				<td><input type="number" id="loanAmt2" step="0.01" required></td>
+			</tr>
+			<tr>
+				<td><input type="number" id="borrowingYear3" disabled></td>
+				<td><input type="number" id="loanAmt3" step="0.01" required></td>
+			</tr>
+			<tr>
+				<td><input type="number" id="borrowingYear4" disabled></td>
+				<td><input type="number" id="loanAmt4" step="0.01" required></td>
+			</tr>
+		</table>
+		<br><br>
+		<form id="loanForm">
+			<button type="button" onclick="calculateDebt()">Calculate</button>
+		</form>
+		<h3>Amortization Schedule</h3>
+		<table border="1">
+			<tr>
+				<th>Year</th>
+				<th>Payment</th>
+				<th>Interest</th>
+				<th>Principal</th>
+				<th>Remaining Debt</th>
+			</tr>
+			<tr>
+				<td>Year 1</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+			<tr>
+				<td>Year 2</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+			<tr>
+				<td>Year 3</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+			<tr>
+				<td>Year 4</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+			<tr>
+				<td>Year 5</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+			<tr>
+				<td>Year 6</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+			<tr>
+				<td>Year 7</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+			<tr>
+				<td>Year 8</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+			<tr>
+				<td>Year 9</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+			<tr>
+				<td>Year 10</td>
+				<td class="payment"></td>
+				<td class="interest"></td>
+				<td class="principal"></td>
+				<td class="debt"></td>
+			</tr>
+		</table>
+		<script>
+			function updateInputTable() {
+				let borrowingYear = parseInt(document.getElementById('borrowingYear1').value);
+				document.getElementById('borrowingYear2').value = borrowingYear + 1;
+				document.getElementById('borrowingYear3').value = borrowingYear + 2;
+				document.getElementById('borrowingYear4').value = borrowingYear + 3;
+			}
+			function calculateDebt() {
+				const borrowingYear1 = parseInt(document.getElementById('borrowingYear1').value);
+				const loanAmt1 = parseFloat(document.getElementById('loanAmt1').value);
+				const borrowingYear2 = borrowingYear1 + 1;
+				const loanAmt2 = parseFloat(document.getElementById('loanAmt2').value);
+				const borrowingYear3 = borrowingYear1 + 2;
+				const loanAmt3 = parseFloat(document.getElementById('loanAmt3').value);
+				const borrowingYear4 = borrowingYear1 + 3;
+				const loanAmt4 = parseFloat(document.getElementById('loanAmt4').value);
+				const interestRate = 0.05;
+				const yearsBetween1and4 = borrowingYear4 - borrowingYear1;
+				let totalDebt = loanAmt1 * Math.pow(1 + interestRate, yearsBetween1and4) +
+				loanAmt2 * Math.pow(1 + interestRate, yearsBetween1and4 - 1) +
+				loanAmt3 * Math.pow(1 + interestRate, yearsBetween1and4 - 2) +
+				loanAmt4;
+				const repaymentYears = 10;
+				const amortization = (totalDebt * interestRate) / (1 - Math.pow(1 + interestRate, -repaymentYears));
+				let paymentsColumn = document.getElementsByClassName("payment");
+				let interestColumn = document.getElementsByClassName("interest");
+				let principalColumn = document.getElementsByClassName("principal");
+				let debtColumn = document.getElementsByClassName("debt");
+				for(let i = 0; i < paymentsColumn.length; i++) {
+					let interest = (totalDebt * (1 + interestRate)) - totalDebt;
+					let principal = amortization - interest;
+					totalDebt -= principal;
+					paymentsColumn[i].textContent = `$${amortization.toFixed(2)}`;
+					interestColumn[i].textContent = `$${interest.toFixed(2)}`;
+					principalColumn[i].textContent = `$${principal.toFixed(2)}`;
+					debtColumn[i].textContent = `$${totalDebt.toFixed(2)}`;
+				}
+				document.getElementById('totalDebt').textContent = `Total Debt: $${totalDebt.toFixed(2)}`;
+				document.getElementById('amortization').textContent = `Annual Amortization Payments: $${amortization.toFixed(2)}`;
+			}
+		</script>
+	</body>
+</html>
